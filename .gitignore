@@ -1,2 +1,2 @@
-# Local environment files, Python caches, and runtime artifacts to ignore.
+<!-- Local environment files, dependencies, caches, and generated artifacts to ignore. -->
 .env
