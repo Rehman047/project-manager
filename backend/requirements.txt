@@ -1,0 +1,6 @@
+flask
+flask-cors
+pyjwt
+passlib[bcrypt]
+google-generativeai
+python-dotenv
