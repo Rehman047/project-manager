@@ -1,1 +1,2 @@
 # Local environment files, Python caches, and runtime artifacts to ignore.
+.env
