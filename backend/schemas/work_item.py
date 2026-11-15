@@ -41,6 +41,11 @@ class WorkItemUpdate(BaseModel):
     sprint_id: uuid.UUID | None = None
 
 
+class WorkItemStatusUpdate(BaseModel):
+    status: WorkItemStatus
+    board_order: int
+
+
 class WorkItemResponse(WorkItemBase):
     model_config = ConfigDict(from_attributes=True)
 
