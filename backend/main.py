@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers.auth import router as auth_router
+from routers.members import router as members_router
+from routers.projects import router as projects_router
+from routers.work_items import router as work_items_router
 
 
 app = FastAPI(title="AI Project Management System")
@@ -13,3 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(projects_router)
+app.include_router(members_router)
+app.include_router(work_items_router)
