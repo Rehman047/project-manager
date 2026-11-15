@@ -1,2 +1,17 @@
-<!-- Local environment files, dependencies, caches, and generated artifacts to ignore. -->
 .env
+
+# Python environments and generated files
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Node dependencies and build output
+node_modules/
+dist/
+.vite/
+
+# Local tooling and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
