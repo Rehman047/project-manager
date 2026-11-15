@@ -4,8 +4,10 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
 import BacklogPage from './pages/BacklogPage';
 import DashboardPage from './pages/DashboardPage';
+import BoardPage from './pages/BoardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import SprintPage from './pages/SprintPage';
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/backlog" element={<BacklogPage />} />
+          <Route path="/board" element={<BoardPage />} />
+          <Route path="/sprint" element={<SprintPage />} />
         </Route>
       </Route>
     </Routes>
