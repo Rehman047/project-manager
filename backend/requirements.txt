@@ -4,8 +4,10 @@ sqlalchemy
 alembic
 psycopg2-binary
 pydantic[email]
+pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt<5
 python-dotenv
 google-generativeai
 scikit-learn
