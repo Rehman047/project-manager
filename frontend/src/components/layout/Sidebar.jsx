@@ -4,7 +4,9 @@ import { useAuthStore } from '../../store/authStore';
 import { useProjectStore } from '../../store/projectStore';
 
 const linkClasses = ({ isActive }) =>
-  `block rounded px-4 py-3 ${isActive ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-800'}`;
+  `flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+    isActive ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+  }`;
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -19,19 +21,30 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed flex min-h-screen w-64 flex-col bg-gray-900 p-4 text-white">
-      <h1 className="mb-8 px-4 text-xl font-bold">Project Manager</h1>
-      <nav className="space-y-2">
-        <NavLink className={linkClasses} to="/">Dashboard</NavLink>
+    <aside className="fixed z-30 flex min-h-screen w-64 flex-col border-r border-slate-800 bg-slate-950 px-4 py-5 text-white">
+      <div className="mb-7 flex items-center gap-3 px-2">
+        <div className="grid h-9 w-9 place-items-center rounded-lg bg-blue-600 text-sm font-bold">PM</div>
+        <div><h1 className="text-sm font-semibold">Project Manager</h1><p className="text-xs text-slate-500">Workspace</p></div>
+      </div>
+      {activeProject && <div className="mb-5 rounded-lg border border-slate-800 bg-slate-900 p-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Current project</p>
+        <p className="mt-1 truncate text-sm font-semibold">{activeProject.name}</p>
+      </div>}
+      <nav className="space-y-1">
+        <NavLink className={linkClasses} end to="/">Dashboard</NavLink>
         <NavLink className={linkClasses} end to="/backlog" onClick={(event) => !activeProject && event.preventDefault()}>
-          <span className={!activeProject ? 'text-gray-600' : ''}>Backlog</span>
+          <span className={!activeProject ? 'text-slate-600' : ''}>Backlog</span>
         </NavLink>
         <NavLink className={linkClasses} to="/board" onClick={(event) => !activeProject && event.preventDefault()}>
-          <span className={!activeProject ? 'text-gray-600' : ''}>Board</span>
+          <span className={!activeProject ? 'text-slate-600' : ''}>Board</span>
         </NavLink>
         <NavLink className={linkClasses} to="/sprint" onClick={(event) => !activeProject && event.preventDefault()}>
-          <span className={!activeProject ? 'text-gray-600' : ''}>Sprint</span>
+          <span className={!activeProject ? 'text-slate-600' : ''}>Sprints &amp; Analytics</span>
         </NavLink>
+        <NavLink className={linkClasses} to="/ai" onClick={(event) => !activeProject && event.preventDefault()}>
+          <span className={!activeProject ? 'text-slate-600' : ''}>AI Assistant</span>
+        </NavLink>
+        <NavLink className={linkClasses} to="/notifications">Notifications</NavLink>
       </nav>
       <button className="mt-auto rounded px-4 py-3 text-left text-gray-300 hover:bg-gray-800" onClick={handleLogout}>
         Logout
