@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import SprintPage from './pages/SprintPage';
 import AIPage from './pages/AIPage';
 import NotificationsPage from './pages/NotificationsPage';
+import MembersPage from './pages/MembersPage';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/sprint" element={<SprintPage />} />
           <Route path="/ai" element={<AIPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/members" element={<MembersPage />} />
         </Route>
       </Route>
     </Routes>

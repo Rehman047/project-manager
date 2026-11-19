@@ -45,6 +45,9 @@ export default function Sidebar() {
           <span className={!activeProject ? 'text-slate-600' : ''}>AI Assistant</span>
         </NavLink>
         <NavLink className={linkClasses} to="/notifications">Notifications</NavLink>
+        <NavLink className={linkClasses} to="/members" onClick={(event) => !activeProject && event.preventDefault()}>
+          <span className={!activeProject ? 'text-slate-600' : ''}>Team Members</span>
+        </NavLink>
       </nav>
       <button className="mt-auto rounded px-4 py-3 text-left text-gray-300 hover:bg-gray-800" onClick={handleLogout}>
         Logout
