@@ -9,6 +9,7 @@ from middleware.dependencies import require_role
 from models.project_member import ProjectMember
 from models.user import User
 from schemas.project import ProjectMemberResponse
+from services.notification_service import create_notification
 
 
 router = APIRouter(prefix="/api/projects/{project_id}/members", tags=["members"])
@@ -44,6 +45,8 @@ def add_member(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is already a project member")
     membership = ProjectMember(project_id=project_id, user_id=user.id, role=payload.role)
     db.add(membership)
+    create_notification(db, user.id, project_id, "member_added",
+                        "You were added to a project", project_id)
     db.commit()
     db.refresh(membership)
     return ProjectMemberResponse(

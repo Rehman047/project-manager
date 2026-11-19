@@ -11,6 +11,8 @@ from models.sprint import Sprint
 from models.user import User
 from models.work_item import WorkItem
 from schemas.sprint import SprintCreate, SprintResponse, SprintUpdate
+from models.project_member import ProjectMember
+from services.notification_service import create_notification
 
 
 router = APIRouter(prefix="/api/projects/{project_id}/sprints", tags=["sprints"])
@@ -50,6 +52,11 @@ def create_sprint(
     )
     db.add(sprint)
     db.commit()
+    for member in db.query(ProjectMember).filter(ProjectMember.project_id == project_id).all():
+        if member.user_id != _.id:
+            create_notification(db, member.user_id, project_id, "sprint_started",
+                                f"Sprint {sprint.name} was started", sprint.id)
+    db.commit()
     db.refresh(sprint)
     return sprint
 
@@ -65,6 +72,11 @@ def update_sprint(
     sprint = get_sprint_or_404(project_id, sprint_id, db)
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(sprint, field, value)
+    db.commit()
+    for member in db.query(ProjectMember).filter(ProjectMember.project_id == project_id).all():
+        if member.user_id != _.id:
+            create_notification(db, member.user_id, project_id, "sprint_closed",
+                                f"Sprint {sprint.name} was closed", sprint.id)
     db.commit()
     db.refresh(sprint)
     return sprint

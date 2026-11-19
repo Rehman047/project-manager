@@ -6,7 +6,12 @@ from sqlalchemy.orm import Session
 from database import get_db
 from middleware.dependencies import require_role
 from models.user import User
+from models.project_member import ProjectMember
 from models.work_item import WorkItem
+from models.comment import Comment
+from schemas.comment import CommentCreate, CommentResponse
+from services.notification_service import create_notification
+from middleware.dependencies import get_current_user
 from schemas.work_item import WorkItemCreate, WorkItemResponse, WorkItemUpdate
 
 
@@ -40,7 +45,7 @@ def list_items(
 def create_item(
     project_id: uuid.UUID,
     payload: WorkItemCreate,
-    _: User = Depends(require_role("member")),
+    current_user: User = Depends(require_role("member")),
     db: Session = Depends(get_db),
 ):
     max_order = (
@@ -55,6 +60,9 @@ def create_item(
         board_order=(max_order + 1 if max_order is not None else 0),
     )
     db.add(item)
+    if item.assignee_id and item.assignee_id != current_user.id:
+        create_notification(db, item.assignee_id, project_id, "assignment",
+                            f"You were assigned to {item.title}", item.id)
     db.commit()
     db.refresh(item)
     return item
@@ -65,12 +73,16 @@ def update_item(
     project_id: uuid.UUID,
     item_id: uuid.UUID,
     payload: WorkItemUpdate,
-    _: User = Depends(require_role("member")),
+    current_user: User = Depends(require_role("member")),
     db: Session = Depends(get_db),
 ):
     item = get_item_or_404(project_id, item_id, db)
+    previous_assignee = item.assignee_id
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, field, value)
+    if item.assignee_id and item.assignee_id != previous_assignee and item.assignee_id != current_user.id:
+        create_notification(db, item.assignee_id, project_id, "assignment",
+                            f"You were assigned to {item.title}", item.id)
     db.commit()
     db.refresh(item)
     return item
@@ -85,4 +97,38 @@ def delete_item(
 ):
     item = get_item_or_404(project_id, item_id, db)
     db.delete(item)
+    db.commit()
+
+
+@router.get("/{item_id}/comments", response_model=list[CommentResponse])
+def list_comments(project_id: uuid.UUID, item_id: uuid.UUID, _: User = Depends(require_role("viewer")), db: Session = Depends(get_db)):
+    get_item_or_404(project_id, item_id, db)
+    comments = db.query(Comment).filter(Comment.work_item_id == item_id).order_by(Comment.created_at.asc()).all()
+    return [CommentResponse.model_validate({**c.__dict__, "author_name": c.author.name}) for c in comments]
+
+
+@router.post("/{item_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+def add_comment(project_id: uuid.UUID, item_id: uuid.UUID, payload: CommentCreate,
+                current_user: User = Depends(require_role("member")), db: Session = Depends(get_db)):
+    item = get_item_or_404(project_id, item_id, db)
+    comment = Comment(work_item_id=item.id, author_id=current_user.id, body=payload.body)
+    db.add(comment)
+    if item.assignee_id and item.assignee_id != current_user.id:
+        create_notification(db, item.assignee_id, project_id, "comment", f"{current_user.name} commented on {item.title}", item.id)
+    db.commit()
+    db.refresh(comment)
+    return CommentResponse.model_validate({**comment.__dict__, "author_name": current_user.name})
+
+
+@router.delete("/{item_id}/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_comment(project_id: uuid.UUID, item_id: uuid.UUID, comment_id: uuid.UUID,
+                   current_user: User = Depends(require_role("member")), db: Session = Depends(get_db)):
+    item = get_item_or_404(project_id, item_id, db)
+    comment = db.query(Comment).filter(Comment.id == comment_id, Comment.work_item_id == item.id).first()
+    if comment is None:
+        raise HTTPException(404, "Comment not found")
+    membership = db.query(ProjectMember).filter(ProjectMember.project_id == project_id, ProjectMember.user_id == current_user.id).first()
+    if comment.author_id != current_user.id and (membership is None or membership.role not in ("pm", "admin")):
+        raise HTTPException(403, "Only the author or project manager can delete comments")
+    db.delete(comment)
     db.commit()
