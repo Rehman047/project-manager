@@ -34,4 +34,4 @@ class ProjectMemberResponse(BaseModel):
     user_id: uuid.UUID
     project_id: uuid.UUID
     role: str
-    user_name: str = Field(validation_alias="name")
+    user_name: str

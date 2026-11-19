@@ -24,7 +24,12 @@ class MemberCreate(BaseModel):
 def list_members(project_id: uuid.UUID, _: User = Depends(require_role("viewer")), db: Session = Depends(get_db)):
     memberships = db.query(ProjectMember).filter(ProjectMember.project_id == project_id).all()
     return [
-        ProjectMemberResponse(user_id=item.user_id, project_id=item.project_id, role=item.role, user_name=item.user.name)
+        ProjectMemberResponse(
+            user_id=item.user_id,
+            project_id=item.project_id,
+            role=item.role,
+            user_name=item.user.name,
+        )
         for item in memberships
     ]
 
@@ -50,7 +55,10 @@ def add_member(
     db.commit()
     db.refresh(membership)
     return ProjectMemberResponse(
-        user_id=membership.user_id, project_id=membership.project_id, role=membership.role, user_name=user.name
+        user_id=membership.user_id,
+        project_id=membership.project_id,
+        role=membership.role,
+        user_name=user.name,
     )
 
 
