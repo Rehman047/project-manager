@@ -15,3 +15,5 @@ class Project(TimestampedUUIDBase):
 
     owner = relationship("User", back_populates="projects")
     members = relationship("ProjectMember", back_populates="project", cascade="all, delete-orphan")
+    notifications = relationship("Notification", back_populates="project", cascade="all, delete-orphan")
+    ai_logs = relationship("AILog", cascade="all, delete-orphan")

@@ -3,7 +3,7 @@ from datetime import date
 
 from sqlalchemy import Date, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import TimestampedUUIDBase
 
@@ -24,3 +24,5 @@ class WorkItem(TimestampedUUIDBase):
     sprint_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("sprints.id"))
     board_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     labels: Mapped[list[str] | None] = mapped_column(ARRAY(String))
+
+    comments = relationship("Comment", back_populates="work_item", cascade="all, delete-orphan")
