@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -49,9 +50,8 @@ def create_item(
     db: Session = Depends(get_db),
 ):
     max_order = (
-        db.query(WorkItem.board_order)
+        db.query(func.max(WorkItem.board_order))
         .filter(WorkItem.project_id == project_id, WorkItem.status == "todo")
-        .order_by(WorkItem.board_order.desc())
         .scalar()
     )
     item = WorkItem(

@@ -19,7 +19,7 @@ export default function KanbanCard({ item, onClick }) {
         <span className="font-medium text-gray-900">{item.title}</span>
         <span className="font-bold text-gray-500">{priorityIcons[item.priority] || '•'}</span>
       </div>
-      <div className="mt-3 text-xs text-gray-500">{item.story_points ?? 0} story points</div>
+      <div className="mt-3 text-xs text-gray-500">{item.story_points ?? 1} story points</div>
     </button>
   );
 }

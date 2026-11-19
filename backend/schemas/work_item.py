@@ -16,7 +16,7 @@ class WorkItemBase(BaseModel):
     description: str | None = None
     status: WorkItemStatus = "todo"
     priority: WorkItemPriority = "medium"
-    story_points: int | None = None
+    story_points: int = Field(default=1, ge=1, le=100)
     due_date: date | None = None
     labels: list[str] = Field(default_factory=list)
 

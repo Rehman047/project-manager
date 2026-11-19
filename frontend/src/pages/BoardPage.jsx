@@ -66,7 +66,21 @@ export default function BoardPage() {
           {columns.map((column) => <KanbanColumn key={column.id} {...column} items={board[column.id]} onCardClick={setSelectedItem} />)}
         </div>
       </DndContext>
-      <WorkItemDetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} />
+      <WorkItemDetailDrawer
+        item={selectedItem}
+        projectId={activeProject.id}
+        onClose={() => setSelectedItem(null)}
+        onUpdated={(updated) => {
+          setSelectedItem(updated);
+          setBoard((current) => {
+            const next = {};
+            for (const status of Object.keys(current)) {
+              next[status] = current[status].map((item) => item.id === updated.id ? updated : item);
+            }
+            return next;
+          });
+        }}
+      />
     </section>
   );
 }

@@ -19,6 +19,7 @@ export default function WorkItemRow({ item, draggable = false }) {
       </div>
       <div className="flex items-center gap-4 text-sm">
         <span className="capitalize text-gray-500">{item.priority}</span>
+        <span className="rounded-full bg-blue-50 px-3 py-1 font-semibold text-blue-700">{item.story_points ?? 1} pts</span>
         <span className="rounded-full bg-gray-100 px-3 py-1 capitalize text-gray-600">{item.status.replace('_', ' ')}</span>
       </div>
     </div>

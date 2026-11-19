@@ -17,14 +17,11 @@ STATUSES = ("todo", "in_progress", "review", "done")
 
 @router.get("/board")
 def get_board(project_id: uuid.UUID, _: User = Depends(require_role("viewer")), db: Session = Depends(get_db)):
-    active_sprint = db.query(Sprint).filter(Sprint.project_id == project_id, Sprint.status == "active").first()
     board = {board_status: [] for board_status in STATUSES}
-    if active_sprint is None:
-        return board
     items = (
         db.query(WorkItem)
-        .filter(WorkItem.project_id == project_id, WorkItem.sprint_id == active_sprint.id)
-        .order_by(WorkItem.board_order)
+        .filter(WorkItem.project_id == project_id)
+        .order_by(WorkItem.status, WorkItem.board_order)
         .all()
     )
     for item in items:
