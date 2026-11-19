@@ -8,6 +8,8 @@ import BoardPage from './pages/BoardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SprintPage from './pages/SprintPage';
+import AIPage from './pages/AIPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
           <Route path="/backlog" element={<BacklogPage />} />
           <Route path="/board" element={<BoardPage />} />
           <Route path="/sprint" element={<SprintPage />} />
+          <Route path="/ai" element={<AIPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
       </Route>
     </Routes>
